@@ -1,0 +1,59 @@
+Consultas SQL 
+ALTER 
+1.Añadir una columna a la tabla Receta para almacenar el número de porciones:
+
+ALTER TABLE Receta ADD COLUMN Porciones INT;
+
+2.Modificar la columna Tiempo_preparacion en la tabla Receta para incluir segundos, y añadir una columna para el tiempo de cocción:
+
+ALTER TABLE Receta MODIFY COLUMN Tiempo_preparacion TIME(0),ADD COLUMN Tiempo_coccion TIME(0) AFTER Tiempo_preparacion;
+
+SELECT 
+1.Obtener los ID(s) de los usuarios más activos junto con su rol en los últimos 30 días , basado en el número de recetas y comentarios publicados:
+
+SELECT u.ID_Usuario, u.Rol, COUNT(DISTINCT r.ID_receta) AS Total_Recetas, COUNT(DISTINCT c.ID_comentario) AS Total_Comentarios FROM Usuario u LEFT JOIN Receta r ON u.ID_Usuario = r.Autor_id AND r.Fecha_creacion >= (SELECT MIN(Fecha) FROM Tabla_Fechas WHERE Condicion = 'últimos_30_días') LEFT JOIN Comentario c ON u.ID_Usuario = c.Usuario_ID AND c.Fecha_comentario >= (SELECT MIN(Fecha) FROM Tabla_Fechas WHERE Condicion = 'últimos_30_días') GROUP BY u.ID_Usuario, u.Rol ORDER BY (Total_Recetas + Total_Comentarios) DESC;
+
+2.Calcular el Promedio de la Calificación de las recetas de cada Usuario y luego seleccionar al Usuario con el Promedio más alto:
+
+SELECT u.Nombre_Usuario , AVG() AS Promedio_Calificacion FROM Usuario u JOIN Receta r ON u.ID_Usuario = r.Autor_ID GROUP BY u.ID_Usuario, u,Nombre_Usuario ORDER BY Promedio_Calificacion DESC LIMIT 1;
+
+3.Mostrar todos los datos de los comentarios para las recetas de tipo “postre ”, y mostrar también el estado del comentario:
+
+SELECT c.*FROM comentario c JOIN Receta r ON c.Receta_ID = r.ID_Receta JOIN Receta_Categoria rc ON r.ID_Receta =rc.Receta _ID JOIN Categoria cat ON rc.Categoria_ID = cat.ID_Categoria WHERE cat.NOmbre_Categoria =’POSTRE’
+
+UPDATE
+1.Actualizar el tiempo de preparación de una receta: 
+
+UPDATE Receta SET tiempo_preparacion = ‘00:45:00’ WHERE ID_receta = ‘REC001’
+
+2. Actualizar el Rol del usuario:
+
+UPDATE Usuario SET Rol = ‘Chef’ WHERE ID_Usuario = ’111111-1’ 
+
+INSERT
+1.Insertar un nuevo usuario:
+
+INSERT INTO Usuario (ID_Usuario, Nombre_Usuario, correo_electronico, Contraseña, Fecha_registro, Rol) VALUES ('222222-2', 'Maria Lopez', 'maria.lopez@example.com', 'contraseña123', CURRENT_DATE, 'usuario normal');
+
+2.Insertar una nueva receta
+
+INSERT INTO Receta (ID_receta, Nombre_receta, Descripción, Tiempo_preparacion, Instrucciones, Fecha_creacion, ID_Autor, Calificación) VALUES ('REC002', 'Pasta Carbonara', 'Deliciosa pasta italiana', '00:30:00', 'Cocinar la pasta, preparar la salsa...', CURRENT_DATE, '222222-2', 4);
+
+3.Insertar un nuevo ingrediente:
+
+INSERT INTO Ingrediente (ID_Ingrediente, Nombre_Ingrediente, Unidad_Medida, Categoría) VALUES ('ING002', 'huevos', 'unidad', 'Lácteos');
+
+
+DELETE 
+1.Eliminar un comentario específico:
+
+DELETE FROM Comentario WHERE ID_Usuario = '111111-1' AND ID_Receta = 'REC001';
+
+2.Eliminar un ingrediente de una receta:
+
+DELETE FROM Receta_Ingrediente WHERE ID_Receta = 'REC001' AND ID_Ingrediente = 'ING001';
+
+DROP  
+1.Eliminar la tabla Categoría:
+
+DROP TABLE Categoría; = 'ING001';
